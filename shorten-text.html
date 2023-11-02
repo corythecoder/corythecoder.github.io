@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Super Spoiler Text in Discord!</title>
+        <link rel="canonical" href="https://corycodes.ga/super-spoiler">
+
+        <!--<script src="https://www.google.com/recaptcha/api.js"></script>-->
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6994SEZMW0"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6994SEZMW0');
+        </script>
+    </head>
+    <body style="background-color:darkcyan">
+        <h1>Customizable Text Shortener</h1>
+        <p>Have you ever tried to type something somewhere but get told your message exceeds the character limit? This simple Javascript app can shorten your message with minor visual differences by replacing certain strings of letters with individual characters that look similar. Enter your text, choose what replacements you want to make, and click the button to shorten the text!</p>
+        <p>Enter text below to shorten it!</p>
+        <div><input id="input"></div>
+        <p>Replace ffi with ﬃ: <input type="checkbox" id="check1"></p>
+        <p>Replace ff with ﬀ: <input type="checkbox" id="check1"></p>
+        <p>Replace fi with ﬁ: <input type="checkbox" id="check1"></p>
+        <p>Replace fl with ﬂ: <input type="checkbox" id="check1"></p>
+        <p>Replace ft with ﬅ: <input type="checkbox" id="check1"></p>
+        <p>Replace st with ﬆ: <input type="checkbox" id="check1"></p>
+        <button onclick="run()">Shorten!</button>
+        <script>
+            var run = function(){
+                text = document.getElementById("input").value;
+                result = "";
+                for (var i = 0; i < text.length; i++) {
+                    result += "||"+text[i]+"||";
+                }
+                document.getElementById("output").innerText = result;
+            }
+        </script>
+        <p id="output"></p>
+    </body>
+</html>

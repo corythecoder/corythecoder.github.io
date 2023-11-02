@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>WordleCraft</title>
+		<link rel="canonical" href="https://corycodes.ga/wordlecraft.html">
+		<meta property="og:type" content="website">
+		<meta property="og:title" content="WordleCraft">
+		<meta property="og:description" content="Wordle with Minecraft words. Not to be confused with several recreactions of Wordle IN Minecraft.">
+		<meta name="og:site_name" content="CoryCodes.ga">
+		<meta property="twitter:title" content="WordleCraft">
+		<meta property="twitter:description" content="Wordle with Minecraft words. Not to be confused with several recreactions of Wordle IN Minecraft.">
+		<meta name="theme-color" content="#91bd59">
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+		<style>
+			h1, p {
+				font-family: sans-serif;
+				text-align: center;
+			}
+			p {
+				font-size: 16px;
+				margin: 0;
+			}
+			h1 {
+				font-size: 32px;
+				margin: 6px;
+			}
+			table {
+				margin: auto;
+				padding-bottom: 16px;
+			}
+			td {
+				border: 1.5px solid #000000;
+				text-align: center;
+				font-size: 100%;
+				width: 20px;
+				height: 20px;
+				padding: 8px;
+			}
+			button {
+				font-size: 1.2em;
+				padding: 5px;
+				margin-bottom: 25px;
+				background-color: darkcyan;
+				color: white;
+			}
+			.simple-keyboard {
+				width: 50%;
+				margin: auto;
+			}
+			.gray, .hg-button.gray {
+				background-color: darkgray; /* so apparently this is lighter than regular gray... */
+			}
+			.yellow, .hg-button.yellow {
+				background-color: wheat; /* I'd rather call it "sand" */
+			}
+			.green, .hg-button.green {
+				background-color: #91bd59; /* minecraft grass: plains */
+			}
+			#wrapper {
+				margin: 0;
+				padding: 0;
+			}
+			@media only screen and (max-width: 1000px) {
+				
+				/* {margin:0;box-sizing:border-box;}
+
+				body {
+					display: flex;
+					flex-direction: column;
+					min-height: 100vh;
+				}
+
+				table {
+					flex: 1;
+				}*/
+				html {
+					height: 100%;
+				}
+
+				body {
+					min-height: 100%;
+				}
+
+				/*table {
+					width: calc(75% - 54px);
+					height: calc(100% - 54px);
+				}*/
+
+				td {
+					width: 50px;
+					height: 50px;
+					font-size: 25px;
+				}
+
+				.simple-keyboard {
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					width: 100%;
+					height: 260px;
+				}
+				.hg-theme-default .hg-button {
+					font-size: 2em;
+					height: 80px;
+				}
+				#wrapper {
+					position: relative;
+					width: 100%;
+					height: 100%;
+					padding-bottom: 280px;
+				}
+			}
+		</style>
+		<!--<script src="https://www.google.com/recaptcha/api.js"></script>-->
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-6994SEZMW0"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-6994SEZMW0');
+		</script>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-254879672', 'auto');
+			ga('send', 'pageview');
+		</script>
+        <meta name="google-site-verification" content="r3MDJ-9uLAqPPY20yOXwgp6li4fApaDufWmau0EXZrU" />
+	</head>
+	<body>
+		<div id="wrapper">
+		<p>
+			<a href="index.html" style="position: absolute;left: 25px;">Back to main page</a>
+			<a href="https://discord.gg/mYxtrHgpEd" style="position: absolute;right: 25px;text-align: right">Discord</a>
+		</p>
+		<h1>WordleCraft</h1>
+		<p id="result" style="display: none;"></p>
+		<table id="board">
+			<tr><td></td><td></td><td></td><td></td><td></td></tr>
+			<tr><td></td><td></td><td></td><td></td><td></td></tr>
+			<tr><td></td><td></td><td></td><td></td><td></td></tr>
+			<tr><td></td><td></td><td></td><td></td><td></td></tr>
+			<tr><td></td><td></td><td></td><td></td><td></td></tr>
+			<tr><td></td><td></td><td></td><td></td><td></td></tr>
+		</table>
+		<input class="input" style="display:none" />
+		<div class="simple-keyboard"></div>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="browser.js"></script>
+	<script>
+		function getCookie(cname) {
+			let name = cname + "=";
+			let ca = document.cookie.split(';');
+			for(let i = 0; i < ca.length; i++) {
+				let c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			return "";
+		}
+		var board = getCookie("board");
+		if (board === "") {
+			board = [
+				[" ", " ", " ", " ", " "],
+				[" ", " ", " ", " ", " "],
+				[" ", " ", " ", " ", " "],
+				[" ", " ", " ", " ", " "],
+				[" ", " ", " ", " ", " "],
+				[" ", " ", " ", " ", " "]
+			];
+			var currentAttempt = 0;
+		} else {
+			var currentAttempt = parseInt(board.charAt(board.length - 1));
+			board = board.slice(0, -1);
+			board = board.replaceAll("+", " ");
+			board = board.split("|");
+			for (var i = 0; i < board.length; i++) {
+				board[i] = board[i].split("&");
+			}
+		}
+		var currentWord = "";
+		var correctWordCopy = "";
+		var thisWord = "";
+		var green = "";
+		var yellow = "";
+		var gray = "";
+		var buttonTheme = [];
+		var completed = false;
+		var share = "";
+		var easyMode = false;
+		function makeTableHTML(myArray) {
+			var result = "";
+			share = "";
+			for(var i=0; i<6; i++) {
+				result += "<tr>";
+				for(var j=0; j<5; j++){
+					if (i >= currentAttempt) {
+						result += "<td>";
+					} else if (correctWord.charAt(j) === (myArray[i][j])) {
+						result += "<td class=\"green\">";
+						if (!easyMode) { share += "🟩"; } else { share += "🟢"; }
+					} else if (!correctWord.includes(myArray[i][j])) {
+						result += "<td class=\"gray\">";
+						if (!easyMode) { share += "⬜"; } else { share += "⚪"; }
+					} else {
+						// the hardest part
+						thisWord = myArray[i].slice(0); // 1. make copy of myArray[i]
+						thisWord.splice(j, 1); // with index j missing
+						if (thisWord.includes(myArray[i][j])) { // 2. check if myArray[i][j] is in copy
+							// this means that the user's word has two of the same letter in it
+							correctWordCopy = correctWord;
+							var re = new RegExp(myArray[i][j]); // 3. remove first myArray[i][j]
+							correctWordCopy = correctWordCopy.replace(re, ''); // from correctWordCopy
+							if (correctWordCopy.includes(myArray[i][j])) {
+								result += "<td class=\"yellow\">";
+								if (!easyMode) { share += "🟨"; } else { share += "🟡"; }
+							} else {
+								if (myArray[i].join("").search(re) === j) { // if we're at the first
+									if (correctWord.charAt(thisWord.join("").search(re)+1)
+											=== myArray[i][j]) { // if the second is green
+										result += "<td class=\"gray\">";
+										if (!easyMode) { share += "⬜"; } else { share += "⚪"; }
+									} else {
+										result += "<td class=\"yellow\">";
+										if (!easyMode) { share += "🟨"; } else { share += "🟡"; }
+									}
+								} else {
+									result += "<td class=\"gray\">";
+									if (!easyMode) { share += "⬜"; } else { share += "⚪"; }
+								}
+							}
+						} else {
+							result += "<td class=\"yellow\">";
+							if (!easyMode) { share += "🟨"; } else { share += "🟡"; }
+						}
+					}
+					result += (myArray[i][j] || " ")+"</td>";
+				}
+				result += "</tr>";
+				share += "<br>";
+			}
+
+			document.getElementById("board").innerHTML = result;
+			return result;
+		};
+
+		function boardToCookie(myArray) {
+			var value = "";
+			for (var i = 0; i < myArray.length; i++) {
+				value += myArray[i].join("&")+"|";
+			}
+			value = value.replace(/\|$/, "");
+			value = value.replaceAll(" ", "+");
+			var expires = "";
+			var date = new Date();
+			var midnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+			expires = "; expires=" + midnight.toGMTString();
+			document.cookie = "board=" + value + currentAttempt + expires + "; path=/";
+		}
+
+		function copyShare() {
+			if (!easyMode) {
+				navigator.clipboard.writeText("https://corycodes.ga/wordlecraft.html\n"
+				+ share.replaceAll("<br>", "\n"));
+			} else {
+				navigator.clipboard.writeText(
+					"https://corycodes.ga/wordlecraft.html\n(circles aren't in minecraft)\n"
+					+ share.replaceAll("<br>", "\n"));
+			}
+			document.querySelector('button').innerText = "Copied ✔";
+		}
+		var five_letter_words = ["BUILD","BLOCK","CUBES","PLACE","STONE","SLATE","DRIPS","GRASS","DIRTS","ROOTS","PLANK","BIRCH","SANDS","RSAND","MINER","MINES","BREAK","IRONS","GOLDS","LAPIS","QUART","WOODS","STRIP","GLASS","TINTS","WOOLS","SLABS","BRICK","BOOKS","MOSSY","STAIR","SNOWS","CLAYS","SOULS","GLOWS","DEEPS","TILES","MELON","COLOR","BALES","PACKS","STAIN","MAGMA","WARTS","BONES","CORAL","BLACK","FERNS","POPPY","TULIP","OXEYE","DAISY","ROSES","LILAC","PEONY","SPORE","FUNGI","WEEPS","TWIST","VINES","SUGAR","CANES","SMALL","TORCH","PLANT","CHEST","CRAFT","TABLE","BENCH","FARMS","SMELT","COOKS","BAKES","BAKED","CLIMB","LAYER","PRICK","POKED","POKES","MUSIC","FENCE","STEMS","CHAIN","PANES","FRAME","ENDER","WALLS","ANVIL","PATHS","LARGE","BOXES","GLAZE","FOLDS","PAINT","SIGNS","HEADS","SKULL","ARMOR","STAND","LOOMS","SMOKE","BLAST","ARROW","GRIND","SMITH","BELLS","CAMPS","LIGHT","HONEY","POINT","RDUST","PULSE","STICK","SLIME","LEVER","TRIPS","WIRES","HOOKS","TRAPS","LAMPS","NOTES","PLATE","DOORS","GATES","SCULK","RAILS","CARTS","BOATS","FLOAT","ITEMS","SCUTE","SHARD","INGOT","SCRAP","BOWLS","CROPS","WHEAT","SEEDS","FLINT","WATER","FROZE","MILKS","FISHS","PAPER","EGGED","COCOA","BEANS","MEALS","PEARL","BLAZE","SPAWN","XPORB","FIRES","BURNS","QUILL","EMPTY","FILLS","STARS","HIDES","HORSE","FRUIT","BEETS","SHELL","DISCS","HEART","APPLE","STEWS","BREAD","PORKS","CAKES","SLICE","DRIED","DRIES","CHICK","FLESH","SOUPS","SWEET","BERRY","STEEL","PICKS","CLOCK","SHEAR","LEADS","NAMED","NAMES","CURSE","BINDS","DEPTH","FALLS","FLAME","FROST","KNOCK","LOOTS","LOYAL","LUCKS","LURES","MENDS","SHOOT","POWER","PUNCH","QUICK","SHARP","TOUCH","SMITE","SPEED","SWEEP","THORN","AIMED","SWORD","TOTEM","GHAST","CREAM","BREWS","FOOTS","SLOWS","HASTE","HEALS","HARMS","BOOST","BLIND","NIGHT","GRACE","OMENS","HEROS","SQUID","MULES","SHEEP","GOLEM","TRADE","GOATS","LLAMA","PANDA","POLAR","BEARS","CREEP","DROWN","ELDER","GUARD","HUSKS","BRUTE","BEAST","STRAY","VEXES","WITCH","GIANT","KILLS","HURTS","DYING","DEATH","AGENT","STEVE","NOTCH","BREED","PLAIN","TAIGA","TREES","OCEAN","HILLS","HILLY","MOUNT","SKIES","CLOUD","RAINS","DROPS","CAVES","WALKS","SNEAK","SWIMS","CRAWL","JUMPS","LANDS","CHIME","CLOSE","OPENS","ENTER","LEAVE","WORKS","RINGS","TILTS","FLOWS","WOOSH","WHIRL","ZOOMS","CLICK","DRAWS","GROWS","CREAK","SLIDE","BURPS","DINGS","CHIRP","STING","STUNG","MEOWS","PURRS","CLUCK","PLOPS","FLOPS","MOOED","EQUIP","MOANS","FLAPS","ROARS","GROWL","VWOOP","CRIES","CRIED","CHEER","CHARM","ANGER","SNORE","SNIFF","SPITS","BLEAT","LEAPS","STOMP","PANTS","HUFFS","TALKS","SWOOP","OINKS","SNORT","GROAN","BITES","GRUNT","BAAHS","LURKS","THROW","ROLLS","CLANG","CLINK","CLANK","THUNK","SCOOP","LOADS","GULPS","STABS","THUMP"];
+		five_letter_words = shuffle(five_letter_words, "WordleCraft");
+		offset = "WordleCraft".split("").map(function(char){return char.charCodeAt(0).toString(2);})
+		offset = offset.join("").replace(/0/g, "").length;
+		var present_date = new Date();
+		var launch_date = new Date("03/16/2022");
+		var day = Math.trunc((present_date.getTime() - launch_date.getTime()) / (1000 * 3600 * 24));
+		correctWord = five_letter_words[(offset+day)%five_letter_words.length];
+
+		let Keyboard = window.SimpleKeyboard.default;
+
+		let keyboard = new Keyboard({
+			onChange: input => onChange(input),
+			onKeyPress: button => onKeyPress(button)
+		});
+		keyboard.setOptions({
+			layout: {'default': [
+				'Q W E R T Y U I O P',
+				'A S D F G H J K L',
+				'{enter} Z X C V B N M {bksp}']
+			},
+			display: {'{bksp}':'&#9003;','{enter}':'enter'}
+		});
+
+		function onChange(input) {};
+
+		function onKeyPress(button) {
+			if (button === '{enter}') {
+				if (five_letter_words.includes(currentWord) || (all_words.includes(currentWord)&&easyMode)) {
+					currentAttempt++;
+					lastWord = currentWord;
+					currentWord = "";
+					board[currentAttempt] = "     ".split("");
+					makeTableHTML(board);
+					green = "";
+					gray = "";
+					yellow = "";
+					buttonTheme = [];
+					for (var i = 0; i < currentAttempt; i++) {
+						for (var j = 0; j < board[i].length; j++) {
+							if (!(green.includes(board[i][j]))
+									&& board[i][j] === correctWord.charAt(j)) {
+								green += board[i][j] + " ";
+							} else if (!(green.includes(board[i][j]))
+									&& !correctWord.includes(board[i][j])
+									&& !(gray.includes(board[i][j]))) {
+								gray += board[i][j] + " ";
+							} else if (!(green.includes(board[i][j]))
+									&& !(yellow.includes(board[i][j]))
+									&& correctWord.includes(board[i][j])) {
+								yellow += board[i][j] + " ";
+							}
+						}
+					}
+					green = green.replace(/\s$/, "");
+					yellow = yellow.replace(/\s$/, "");
+					gray = gray.replace(/\s$/, "");
+					if (green !== "") {
+						buttonTheme.push({
+							'class':'green',
+							'buttons': green
+						});
+					}
+					if (yellow !== "") {
+						buttonTheme.push({
+							'class':'yellow',
+							'buttons': yellow
+						});
+					}
+					if (gray !== "") {
+						buttonTheme.push({
+							'class':'gray',
+							'buttons': gray
+						});
+					}
+					keyboard.setOptions({buttonTheme:buttonTheme});
+					if (lastWord === correctWord) {
+						completed = true;
+
+						resultMessage = document.getElementById("result");
+						resultMessage.innerHTML = "you are smart<br>"+share;
+						resultMessage.innerHTML += "<br><button onclick=\"copyShare()\">Share 📋</a>";
+						resultMessage.style = "";
+					} else if (currentAttempt > 5) {
+						completed = true;
+
+						resultMessage = document.getElementById("result");
+						resultMessage.innerHTML = "you failed<br>correct word:"+correctWord+"<br>"+share;
+						resultMessage.innerHTML += "<br><button onclick=\"copyShare()\">Share 📋</a>";
+						resultMessage.style = "";
+					}
+					boardToCookie(board);
+				}
+			} else if (button === '{bksp}') {
+				currentWord = currentWord.slice(0, -1);
+				board[currentAttempt] = currentWord.split("");
+				makeTableHTML(board);
+			} else if (!completed) {
+				if (currentWord.length < 5) {
+					currentWord += button;
+				}
+				board[currentAttempt] = currentWord.split("");
+				makeTableHTML(board);
+			}
+		};
+		makeTableHTML(board);
+		green = "";
+		gray = "";
+		yellow = "";
+		buttonTheme = [];
+		for (var i = 0; i < currentAttempt; i++) {
+			for (var j = 0; j < board[i].length; j++) {
+				if (!(green.includes(board[i][j]))
+						&& board[i][j] === correctWord.charAt(j)) {
+					green += board[i][j] + " ";
+				} else if (!(green.includes(board[i][j]))
+						&& !correctWord.includes(board[i][j])
+						&& !(gray.includes(board[i][j]))) {
+					gray += board[i][j] + " ";
+				} else if (!(green.includes(board[i][j]))
+						&& !(yellow.includes(board[i][j]))
+						&& correctWord.includes(board[i][j])) {
+					yellow += board[i][j] + " ";
+				}
+			}
+		}
+		green = green.replace(/\s$/, "");
+		yellow = yellow.replace(/\s$/, "");
+		gray = gray.replace(/\s$/, "");
+		if (green !== "") {
+			buttonTheme.push({
+				'class':'green',
+				'buttons': green
+			});
+		}
+		if (yellow !== "") {
+			buttonTheme.push({
+				'class':'yellow',
+				'buttons': yellow
+			});
+		}
+		if (gray !== "") {
+			buttonTheme.push({
+				'class':'gray',
+				'buttons': gray
+			});
+		}
+		keyboard.setOptions({buttonTheme:buttonTheme});
+		if (currentAttempt !== 0 && board[currentAttempt-1].join("") === correctWord) {
+			completed = true;
+
+			resultMessage = document.getElementById("result");
+			resultMessage.innerHTML = "you are smart<br>"+share;
+			resultMessage.innerHTML += "<br><button onclick=\"copyShare()\">Share 📋</a>";
+			resultMessage.style = "";
+		} else if (currentAttempt > 5) {
+			completed = true;
+
+			resultMessage = document.getElementById("result");
+			resultMessage.innerHTML = "you failed<br>correct word:"+correctWord+"<br>"+share;
+			resultMessage.innerHTML += "<br><button onclick=\"copyShare()\">Share 📋</a>";
+			resultMessage.style = "";
+		}
+		var keyList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+		window.onkeydown = function(e) {
+			if (e.keyCode >= 65) {
+				onKeyPress(keyList[e.keyCode-65]);
+			} else if (e.keyCode === 13) {
+				onKeyPress('{enter}');
+			} else if (e.keyCode === 8) {
+				onKeyPress('{bksp}');
+			}
+		}
+	</script>
+</html>

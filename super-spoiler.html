@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Super Spoiler Text in Discord!</title>
+        <link rel="canonical" href="https://corycodes.ga/super-spoiler">
+
+        <!--<script src="https://www.google.com/recaptcha/api.js"></script>-->
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6994SEZMW0"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6994SEZMW0');
+        </script>
+    </head>
+    <body style="background-color:darkcyan">
+        <h1>Super Spoiler Text in Discord!</h1>
+        <p>Have you ever thought that spoilers in Discord aren't strong enough? Like, just clicking it once reveals it, and it's so tempting to click on it. This generator will automatically put spoilers around each individual character so that people have to click on every one of them to reveal the spoiler. Try it now!</p>
+        <p>Enter text below to super-spoiler it!</p>
+        <input id="input">
+        <button onclick="run()">Super spoiler!</button>
+        <script>
+            var run = function(){
+                text = document.getElementById("input").value;
+                result = "";
+                for (var i = 0; i < text.length; i++) {
+                    result += "||"+text[i]+"||";
+                }
+                document.getElementById("output").innerText = result;
+            }
+        </script>
+        <p id="output"></p>
+    </body>
+</html>

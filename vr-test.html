@@ -1,0 +1,25 @@
+<html>
+
+    <head>
+        <title>VR Test with A-Frame</title>
+        <meta name="description" content="VR Test with A-Frame">
+
+        <!-- a-frame -->
+        <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+        <!-- a-frame physics system -->
+        <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.1.0/dist/aframe-physics-system.min.js"></script>
+    </head>
+
+    <body>
+        <!-- a-scene contains all our A-Frame HTML -->
+        <a-scene physics="debug: false; debugDrawMode: 1;">
+            <a-sky color="black"></a-sky>
+            <a-plane color="#008080" shader="flat" height="10" width="10" rotation="-90 0 0" static-body></a-plane>
+            <a-plane position="0 5 5" color="#008080" height="10" width="10" rotation="0 180 0" static-body></a-plane>
+            <a-plane position="-5 5 0" color="#008080" height="10" width="10" rotation="0 90 90" static-body></a-plane>
+            <a-plane position="5 5 0" color="#008080" height="10" width="10" rotation="0 -90 90" static-body></a-plane>
+            <a-plane position="0 5 -5" color="#008080" height="10" width="10" static-body></a-plane>
+            <a-box position="0 10 -2.5" color="green" width="1" height="1" depth="1" dynamic-body></a-box>
+        </a-scene>
+    </body>
+</html>
