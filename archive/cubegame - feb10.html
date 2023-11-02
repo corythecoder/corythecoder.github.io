@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CubeGame</title>
+  <style>
+    h1 {
+        font-size: 2em;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    hr {
+        height: 2px;
+    }
+    #howtoplay-wrapper {
+        height: 400px;
+        overflow-y: scroll;
+    }
+    #canvas-wrapper {
+        max-width: 400px;
+        max-height: 400px;
+      }
+    #chat-wrapper {
+        visibility: hidden;
+        overflow-x: scroll;
+    }
+    #copyright-information {
+        color: grey;
+        font-size: 15px;
+    }
+    .wrapper {
+        padding: 5px;
+        max-width: 95%;
+        width: 95%;
+        margin: 20px auto;
+    }
+    .columns {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        margin: 5px 0;
+    }
+    .column {
+        flex: 1;
+        border: 1px solid gray;
+        margin: 2px;
+        padding: 10px;
+        &:first-child { margin-left: 0; }
+        &:last-child { margin-right: 0; }
+    }
+
+    @media screen and (max-width: 980px) {
+        .columns .column {
+            margin-bottom: 5px;
+            flex-basis: 40%;
+            &:nth-last-child(2) {
+                margin-right: 0;
+            }
+            &:last-child {
+                flex-basis: 100%;
+                margin: 0;
+            }
+        }
+    }
+    @media screen and (max-width: 680px) {
+        .columns .column {
+            flex-basis: 100%;
+            margin: 0 0 5px 0;
+        }
+    }
+  </style>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CubeGame">
+  <meta property="og:description" content="A cube-based game about a zombie apocalypse">
+  <meta name="og:site_name" content="CoryCodes.ga">
+  <meta name="og:image" content="https://corycodes.ga/cubegame-image.png">
+  <meta name="twitter:title" content="CubeGame">
+  <meta name="twitter:description" content="A cube-based game about a zombie apocalypse">
+  <meta name="twitter:image" content="https://corycodes.ga/cubegame-image.png">
+  <meta name="theme-color" content="#75AB4D">
+
+  <link rel="canonical" href="https://corycodes.ga/cubegame.html">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6994SEZMW0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-6994SEZMW0');
+</script>
+</head>
+<body>
+    <div class="wrapper">
+        <section class="columns">
+            <div id="howtoplay-wrapper" class="column">
+                <h1>How to Play</h1>
+                <p>Hover your mouse over the game area on the right to start. Make sure to click on the game area as well to make sure that it is focused, otherwise it won't respond to key presses.</p>
+                <p>You can switch between characters with the ` key.</p>
+                <h2>Movement</h2>
+                <p>Use WASD to move Player 1</p>
+                <p>Player 1 can fly via the up and down arrow keys.</p>
+                <h2>Interaction</h2>
+                <p>Use Mouse Cursor to move selector. Left click to move the selector to the top of a stack of blocks and right click to move the selector down one block.</p>
+                <p>Press Z to place blocks and open doors. Holding shift while pressing Z will result in the selector moving up after the block is placed.</p>
+                <p>Press X to destroy blocks and in the future, attack players. Holding shift while pressing X will result in the selector moving down after destorying the block.</p>
+                <p>Press C to cycle through the available blocks. Holding shift while pressing C will cycle in reverse. Press the middle mouse button (scroll wheel) to select the block your selector is in/on top of.</p>
+                <h2>Zombie Mode</h2>
+                <p>Press N to make it night and spawn 5 zombies. They will do whatever they can to follow you, including destroying your base. If a zombie reaches you, it will attack you and you will lose one of your 10 health points. After a short amount of time, it will become day and all of the zombies will "die" by vanishing.</p>
+                <br>
+                <p>Press F1 to hide the selected block. Good for screenshots of builds.</p>
+                <p>Press F2 to show debug information.</p>
+                <p>Press F3 to spawn a zombie at the selected location.</p>
+                <p>Press F4 to spawn a zombie at a random location at the edge of the map, the same way they are spawned at night.</p>
+                <!--<p>If you want the glitchy experimental version of the selector, click <a href="javascript:processing.mouseMoved=function(){selectorX=Math.round(processing.mouseX/35);selectorY=Math.round((processing.mouseY+(selectorLayer-2)*13)/30);};">here</a>. If the link doesn't work, type this code into the javascript console: <code>processing.mouseMoved=function(){selectorXGlobal=Math.round(processing.mouseX/35);selectorYGlobal=Math.round((processing.mouseY+(selectorLayerGlobal-2)*13)/30);};</code></p>-->
+            </div>
+            <div id="canvas-wrapper" class="column">
+                <canvas id="canvas"></canvas>
+            </div>
+            <div id="chat-wrapper" class="column">
+                <p id="chat">temporary location for debug info</p>
+            </div>
+        </section>
+        <div id="updates">
+            <!--<h2>November 17th, 2021</h2>
+            <p>Finally it's working! If you want the glitchy experimental version, click <a href="javascript:processing.mouseMoved=function(){selectorX=Math.round(processing.mouseX/35);selectorY=Math.round((processing.mouseY+(selectorLayer-2)*13)/30);};">here</a>. If the link doesn't work, type this code into the javascript console: <code>processing.mouseMoved=function(){selectorX=Math.round(processing.mouseX/35);selectorY=Math.round((processing.mouseY+(selectorLayer-2)*13)/30);};</code></p>-->
+            <h2>February 10th, 2022</h2>
+            <p>Blocks are now only rendered when they are exposed to air above or in front of them. This makes the game much smoother, however the selector is still delayed behind the mouse. I also increased the speed of the game from 30 to 120, so zombies are 4 times as fast.</p>
+            <h2>November 24th, 2021</h2>
+            <p>Due to the change below, nighttime passed twice as fast. This has been fixed.</p>
+            <h2>November 16th, 2021</h2>
+            <p>The map is no longer redrawn 30 times a second. Instead, it happens when it needs to or when the game thinks it needs to. Also health is now shown as 10 hearts in the bottom left, sine I decided your health might not automatically refill completely at daytime, and max health might change through levels.</p>
+            <h2>November 1st, 2021</h2>
+            <p>I switched it back to how it was for now. I'm working on making a way to easily switch to the glitchy version but it's not working at the moment.</p>
+            <h2>October 1st, 2021</h2>
+            <p>Fixed, but it works kinda werid... I might add a way to switch between different ways for it to work, but for now it's kinda glitchy.</p>
+            <h2>September 30th, 2021</h2>
+            <p>Bugfixing:</p>
+            <ul>
+            <li>Fixed zombies breaking blocks instantly if it was to the east or west.</li>
+            <li>Fixed unnecessary space in the F2 screen leftover from the removal of player 2.</li>
+            <li>Fixed game freezing when breaking the block at the bottom of the world.</li>
+            <li><s>The location of the selector relative to the mouse at higher heights was offset vertically.</s> Fixing this tomorrow.</li>
+            </ul>
+            <h2>September 24th, 2021</h2>
+            <p>I found out that zombies not breaking blocks was due to the way the strength of blocks was decreasing each level. This feature has been removed, and zombies now break blocks properly. I think...</p>
+            <h2>September 22th, 2021</h2>
+            <p>Zombies don't seem to break blocks anymore... Also nighttime lasts 3 seconds longer each level.</p>
+            <h2>September 20th, 2021</h2>
+            <p>Removed Player 2 and added the ability to switch between the two characters with the ` key.</p>
+            <h2>September 16th, 2021</h2>
+            <p>Health can now be seen when you press F2. The reason I don't think it's necessary to have the health visible all of the time is because you should always be running from the zombies, and there's no way to heal other than waiting for day again, so there's not much of a reason to see your health. Actually, now that I think about it, you might want to know if you're low on health so that you can know if it's safe to run through a zombie blocking your way... Well, for now, if you ever need to see your health, you can see it by pressing F2.</p>
+            <h2>September 15th, 2021</h2>
+            <p>The player now has 10 health (which you can't see) and if it goes down to zero, you will get an alert that you died and when you click OK, the page will refresh. A zombie will attack you if it is standing in the same space as you, at the same time that it would normally move or break a block.</p>
+            <h2>September 14th, 2021</h2>
+            <p>I made a few temporary answers for the questions until I get suggestions from someone. (give suggestions on <a href="https://discord.gg/mYxtrHgpEd">my Discord server</a>)</p>
+            <ul>
+                <li>The strength of blocks is reduced by 5 each level. Writing this, I realize that it will become negative and at that point, the zombies will actually be geting weaker...</li>
+                <li>Blocks were actually given temporary hardness on September 9th, I just forgot to mention it.</li>
+                <li>Every level, there will be 1 more zombie than there was in the last.</li>
+            </ul>
+            <p>Note that these are only temporary and I'm still waiting for suggestions on these things in <a href="https://discord.gg/mYxtrHgpEd">my Discord server</a>.</p>
+            <h2>September 13th, 2021</h2>
+            <p>Things I need suggestions for:</p>
+            <ul>
+                <li>In what ways will zombies get harder to avoid through levels? (how much faster and possibly smarter)</li>
+                <li>What is the strength of each block and how will it affect how fast zombies break it? (the harder the block, the longer it should take for zombies to break it)</li>
+                <li>What blocks and how many of them do you get to build your base, and how will it change through levels? (blocks to make base should get stronger as you progress)</li>
+                <li>How will the number of zombies increase through the levels? (add a zombie each level, multiply the zombies by 2 each level, etc.)</li>
+                <li>Better art?</li>
+            </ul>
+            <p>Make suggestions for the game on <a href="https://discord.gg/mYxtrHgpEd">my Discord server</a>!</p>
+            <h2>September 9th, 2021</h2>
+            <p>The speed of zombies doesn't seem right to me. Currently, 30 times a second, the game goes through each zombie and there's a 1/(z*5) chance for the zombie to move, where z is how many zombies are on the board. This means that, on average, assuming Javascript's random function isn't broken, 6 times a second a random zombie will try to move or break a block. If you have any suggestions for better movement please suggest it on <a href="https://discord.gg/mYxtrHgpEd">my Discord server</a>! Suggestions for strength/harndess of blocks would also be appriciated.</p>
+            <h2>September 8th, 2021</h2>
+            <p>Finally getting back to working on this game! Cleaned up the code a little and made it so zombies have a 10% chance to break blocks. Later I'll make it so that the chance is higher or lower based on what block it is.</p>
+            <h1>Undated Late 2019 to Early 2020 Updates:</h1>
+            <h2>The purpose of the game is coming soon! Here's a list of released Zombie Apocalypse features so far:</h2>
+            <p>Zombies can now be spawned with F3. They will try follow you. If there is a wall in a zombie's way, it will <em>not</em> attempt to go arround it.</p>
+            <p>When you press N, five zombies will spawn and it will become night. After a short amonunt of time, it will become day again and all zombies will despawn.</p>
+            <h2>Zombie Apocalypse Ideas:</h2>
+            <p>Instead of having to build the exact same house as shown, you will be able to build whatever house you want and zombies will just come and break the blocks one by one. Eventually, I might make some blocks stronger than others and you will have to experiment to find what is the best to use for your house.</p>
+            <h1>Very Old Updates:</h1>
+            <h2>v0.3 in development</h2>
+            <p>Added more Roof Blocks.</p>
+            <p>PLANNED: </p>
+            <p>If you continue building the unfinished house using the Roof Blocks then you can have shelter from the coming-soon zombie apocalypse. This will be the point of the game. Of course, I will also add a regular building mode for those who just want to build and not worry about zombies. When these features come out, I'll post a game walkthrough on my youtube channel.</p>
+            <h2>v0.2.1 (suggested by my older sister)</h2>
+            <p>Added "Make sure to click on the game area before you start playing to make sure that it is focused." to How to Play</p>
+            <p>Fixed a bug where pressing the U key would cause Player 1 to fly up if Player 2 had room to move up.</p>
+            <h2>v0.2</h2>
+            <p>Player 2 can now fly using the U and J keys.</p>
+            <p>Bugfix: Players can no longer walk through the top half of 2-block-tall blocks.</p>
+            <h2>v0.1.2</h2>
+            <p>Made a few changed to how the selector works, it now uses mouse movement instead of arrow keys.</p>
+            <h2>v0.1.1</h2>
+            <p>Bug fixes</p>
+            <h2>v0.1</h2>
+            <p>The game has been released to the public, but it is still missing many important features.</p>
+        </div>
+        <hr>
+        <div id="copyright-information">
+            <p>All images are from Lost Garden at <a href="https://lostgarden.home.blog/2007/05/12/dancs-miraculously-flexible-game-prototyping-tiles/">https://lostgarden.home.blog/</a> with the license <a href="https://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 (CC BY 3.0 US)</a>. The <a href="/cute/CustomZombie.png">zombie</a> is simply a green tinted version of Character-Boy.png, and it is also free to use.</p>
+        </div>
+    </div>
+    <!-- https://stackoverflow.com/a/25341598 -->
+    <!-- very useful :D -->
+    <script>
+        var canvas = document.getElementById("canvas");
+        var processing = new Processing(canvas, function(processing) {
+            processing.size(400, 400);
+            processing.background(0xFFF);
+
+            var mouseIsPressed = false;
+            processing.mousePressed = function () { mouseIsPressed = true; };
+            processing.mouseReleased = function () { mouseIsPressed = false; };
+
+            var keyIsPressed = false;
+            processing.keyPressed = function () { keyIsPressed = true; };
+            processing.keyReleased = function () { keyIsPressed = false; };
+
+            function getImage(s) {
+                var url = "/" + s + ".png";
+                processing.externals.sketch.imageCache.add(url);
+                return processing.loadImage(url);
+            }
+
+            // use degrees rather than radians in rotate function
+            var rotateFn = processing.rotate;
+            processing.rotate = function (angle) {
+                rotateFn(processing.radians(angle));
+            };
+
+            with (processing) {
+
+imageMode(CENTER);
+var debug_screen_on = false;
+var hud_shown = true;
+var selected_block = 0;
+var available_blocks = ["cute/PlainBlock", "cute/StoneBlock", "cute/WoodBlock", "cute/WallBlockTall", "cute/BrownBlock", "cute/DirtBlock", "cute/GrassBlock", "cute/DoorTallClosed", "cute/RoofSouth", "cute/RoofSouthEast", "cute/RoofEast", "cute/RoofNorthEast", "cute/RoofNorth", "cute/RoofNorthWest", "cute/RoofWest", "cute/RoofSouthWest"];
+var owned_materials = [100, 100, 100, 50, 100, 100, 75, 10, 30, 10, 30, 10, 30, 10, 30, 10];
+var hardness_of_blocks = [10, 8, 3, 6, 1, 1, 1, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5];
+var tall_blocks = ["cute/WallBlockTall", "cute/DoorTallClosed"];
+var keys = [];
+var tilemap = [];
+for (var i = 0; i < 13; i++){
+    tilemap[i] = [];
+    for (var j = 0; j < 14; j++){
+        tilemap[i][j] = [];
+        for (var k = 0; k < 12; k++){
+            tilemap[i][j][k] = 0;
+        }
+    }
+}
+
+var whichBlock = function(xLocation, yLocation, layerLocation) {
+    if (!(tilemap[layerLocation][yLocation] === undefined)){
+        return tilemap[layerLocation][yLocation][xLocation];
+    } else {
+        throw Error;
+    }
+};
+var blockAt = function(xLocation, yLocation, layerLocation) {
+    if (tilemap[layerLocation][yLocation][xLocation] !== 0) {
+        return true;
+    } else {
+        return !(whichBlock(xLocation, yLocation, layerLocation-1) !== "cute/WallBlockTall" && whichBlock(xLocation, yLocation, layerLocation-1) !== "cute/DoorTallClosed");
+    }
+};
+var shadowCircle = function(blockScaleX, blockScaleY, a) {
+    fill(0, 0, 0, 255);
+    stroke(0, 0, 0, 50);
+    strokeWeight(10);
+    ellipse(((blockScaleX * 35) - 3)+10, ((blockScaleY * 30))+10, 10, 10);
+};
+// pixels to blocks function
+var drawBlock = function(img, blockScaleX, blockScaleY, blockScaleLayer) {
+    if (img === "characterShadow") {
+        shadowCircle(blockScaleX, blockScaleY);
+    } else if (!img.endsWith("Top")) {
+        image(getImage(img), (blockScaleX * 35 - 3)+10, (blockScaleY * 30 - blockScaleLayer * 13)+10, 36, 60);
+    }
+};
+var placeBlock = function(block, blockScaleX, blockScaleY, blockScaleLayer) {
+    tilemap[blockScaleLayer][blockScaleY][blockScaleX] = block;
+    if (block in tall_blocks) {
+         //tilemap[blockScaleLayer+1][blockScaleY][blockScaleX] = block+"Top";
+    }
+};
+
+/*var checkBlockArea = function(x1, y1, layer1, x2, y2, layer2) {
+    let ans = [];
+    for (let layer=layer1; layer <= layer2; layer++){
+        let temp2d = [];
+        for (let y=y1; y <= y2; y++){
+            let temp1d = [];
+            for (let x=x1; x <= x2; x++){
+                temp1d.push(tilemap[layer][y][x]);
+            }
+            temp2d.push(temp1d);
+        }
+        ans.push(temp2d);
+    }
+    return ans;
+};*/
+
+var x = 4; // character starting x pos (by blocks, not by pixels)
+var y = 10; // character starting y pos (by blocks, not by pixels)
+var layer = 2; // character starting block layer
+var health = 10; // character health
+var skin = "Boy";
+
+var selectorX = 0; // selector starting x pos (by blocks, not by pixels)
+var selectorY = 0; // selector starting y pos (by blocks, not by pixels)
+var selectorLayer = 2; // selector starting block layer
+
+var zombies = [];
+var zombieSpawningLocations = [];
+for (var i = 0; i < tilemap[0][0].length; i++) {
+    zombieSpawningLocations.push([i, 0]);
+    zombieSpawningLocations.push([i, tilemap[0].length-1]);
+}
+for (var i = 0; i < tilemap[0].length; i++) {
+    zombieSpawningLocations.push([0, i]);
+    zombieSpawningLocations.push([tilemap[0][0].length-1, i]);
+}
+var zombieSpawningLocation;
+
+var isNight = false;
+var nighttimeRemaining = 0;
+var zombiesNextLevel = 3;
+var zombieMoved;
+var levelsPassed = 0;
+var blockLimitReachedMessageDelay = 0;
+
+var drawMap = function() {
+    background(185, 250, 255);
+    for (var j = 0; j < tilemap[0].length; j++) {
+        for (var i = 0; i < tilemap.length; i++) {
+            for (var k = 0; k < tilemap[i][j].length; k++) {
+                if (tilemap[i][j][k] !== 0 && tilemap[i][j][k] !== "characterShadow") {
+                    if (i === 12 || j === 13) {
+                        drawBlock(tilemap[i][j][k], k, j, i);
+                    } else if (tilemap[i+1][j][k] === 0 || tilemap[i][j+1][k] === 0 ||
+                            tilemap[i+1][j+1][k] === 0) {
+                        drawBlock(tilemap[i][j][k], k, j, i);
+                    }
+                } else if (tilemap[i][j][k] === "characterShadow") {
+                    shadowCircle(k, j);
+                }
+                if (k === selectorX && j === selectorY && i === selectorLayer) {
+                    drawBlock("cute/Selector", selectorX, selectorY, selectorLayer);
+                }
+                if (k === x && j === y && i === layer) {
+                    //drawBlock("characterShadow", x, y, 7);
+                    drawBlock("cute/Character"+skin, x, y, layer);
+                }
+                for (var l = 0; l < zombies.length; l++) {
+                    if (k === zombies[l].x && j === zombies[l].y && i === zombies[l].layer){
+                        drawBlock(zombies[l].image, zombies[l].x, zombies[l].y, zombies[l].layer)
+                    }
+                }
+            }
+        }
+    }
+    drawBlock("cute/Selector2", selectorX, selectorY, selectorLayer);
+    if (isNight) {
+        fill(0, 0, 150,100);
+        rect(0,0,400,400);
+        fill(0,0,0,255);
+    }
+    if (debug_screen_on) {
+        showDebugScreen();
+    }
+    if (hud_shown) {
+        image(getImage(available_blocks[selected_block]), 370, 355, 50, 75);
+        for (var i = 25; i < health*15; i+=15) {
+            image(getImage("cute/Heart"), i, 370, 50, 75);
+        }
+    }
+};
+var moveZombie = function(id){
+    // "Math.abs(zombies[id].x-x)" is the x distance between the zombie and the player
+    if (Math.abs(zombies[id].x-x) >= Math.abs(zombies[id].y-y)) {
+        if (zombies[id].x-x < 0) {
+            if (!blockAt(zombies[id].x+1,zombies[id].y, zombies[id].layer)){
+                zombies[id].x++;
+            } else if (whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer)==="cute/DoorTallOpen"){
+                zombies[id].x++;
+            } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer))]))) {
+                placeBlock(0, zombies[id].x+1,zombies[id].y, zombies[id].layer);
+            }
+        } else if (zombies[id].x-x > 0) {
+            if (!blockAt(zombies[id].x-1,zombies[id].y, zombies[id].layer)){
+                zombies[id].x--;
+            } else if (whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer)==="cute/DoorTallOpen"){
+                zombies[id].x--;
+            } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer))]))) {
+                placeBlock(0, zombies[id].x-1,zombies[id].y, zombies[id].layer);
+            }
+        } else {
+            health--;
+        }
+    } else {
+        if (zombies[id].y-y < 0) {
+            if (!blockAt(zombies[id].x,zombies[id].y+1, zombies[id].layer)){
+                zombies[id].y++;
+            } else if (whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer)==="cute/DoorTallOpen"){
+                zombies[id].y++;
+            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer))]-5*levelsPassed)) {
+                placeBlock(0, zombies[id].x,zombies[id].y+1, zombies[id].layer)
+            }
+        } else if (zombies[id].y-y > 0) {
+            if (!blockAt(zombies[id].x,zombies[id].y-1, zombies[id].layer)){
+                zombies[id].y--;
+            } else if (whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer)==="cute/DoorTallOpen"){
+                zombies[id].y--;
+            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer))]-5*levelsPassed)) {
+                placeBlock(0, zombies[id].x,zombies[id].y-1, zombies[id].layer)
+            }
+        }
+    }
+}
+var showDebugScreen = function() {
+    textSize(15);
+    text("x: " + x, 10, 15);
+    text("y: " + y, 10, 35);
+    text("layer: " + layer, 10, 55);
+    text("Selected Block:", 10, 75);
+    text("      x: " + selectorX, 10, 95);
+    text("      y: " + selectorY, 10, 115);
+    text("      layer: " + selectorLayer, 10, 135);
+    text("A block is at selector location? " + blockAt(selectorX, selectorY, selectorLayer), 10, 155);
+    text("Mouse Canvas Co-ordinates: (" + mouseX + ", " + mouseY + ")", 10, 175);
+    text("You are holding block #" + selected_block + ": " + available_blocks[selected_block], 10, 195);
+};
+
+for (var xy = 0; xy < tilemap[0].length; xy++) {
+    for (var yx = 0; yx < tilemap[0][0].length; yx++) {
+        placeBlock("cute/DirtBlock", yx, xy, 0);
+        placeBlock("cute/GrassBlock", yx, xy, 1);
+    }
+}
+
+placeBlock("cute/WallBlockTall", 10, 5, 2);
+placeBlock("cute/WallBlockTall", 6, 5, 2);
+placeBlock("cute/WoodBlock", 7, 5, 2);
+placeBlock("cute/WoodBlock", 7, 5, 3);
+placeBlock("cute/WoodBlock", 9, 5, 2);
+placeBlock("cute/WoodBlock", 9, 5, 3);
+placeBlock("cute/DoorTallClosed", 8, 5, 2);
+placeBlock("cute/WallBlockTall", x+1, y+1, 1);
+placeBlock("cute/WallBlockTall", x-1, y-1, 1);
+var mainloop = function() {
+    if (health <= 0) {
+        alert("You died! Click OK to restart.");
+        location.reload();
+    }
+
+    if (isNight) {
+        zombieMoved = false;
+        for (var i = 0; i < zombies.length; i++) {
+            if (!Math.floor(Math.random() * (zombies.length*5))) {
+                moveZombie(i);
+                zombieMoved = true;
+            }
+        }
+        nighttimeRemaining--;
+        if (nighttimeRemaining <= 0) {
+            isNight = false;
+            zombies = [];
+            levelsPassed++;
+            drawMap();
+        } else if (zombieMoved) {
+            drawMap();
+        }
+    }
+    if (blockLimitReachedMessageDelay > 0){
+        text("Block limit for building is 13 layers", 200, 200, 100, 100);
+        blockLimitReachedMessageDelay--;
+        if (blockLimitReachedMessageDelay === 0) {
+            drawMap();
+        }
+    }
+    if (selectorLayer !== 0 && whichBlock(selectorX, selectorY, selectorLayer-1) === 0 && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/WallBlockTall" && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/DoorTallClosed") {
+        while (selectorLayer !== 0 && whichBlock(selectorX, selectorY, selectorLayer-1) === 0 && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/WallBlockTall" && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/DoorTallClosed") {
+            selectorLayer--;
+        }
+        drawMap();
+    }
+};
+
+// controls
+keyPressed = function() {
+    keys[keyCode] = true;
+    keyIsPressed = true;
+    if (keys[16]) { // press the SHIFT key and...
+        if (keys[90]) { // press the z key and...
+            if (selectorLayer < 13) {
+                if (!blockAt(selectorX, selectorY, selectorLayer)) {
+                    placeBlock(available_blocks[selected_block], selectorX, selectorY, selectorLayer);
+                    selectorLayer++;
+                    owned_materials[selected_block]--;
+                }
+            } else {
+                blockLimitReachedMessageDelay = 120;
+            }
+        }
+        if (keys[88]) { // press the x key and...
+            owned_materials[available_blocks.indexOf(whichBlock(selectorX, selectorY, selectorLayer))]--;
+            placeBlock(0, selectorX, selectorY, selectorLayer);
+            selectorLayer--;
+        }
+        if (keys[67]) { // press the c key and...
+            if (selected_block === 0) {
+                selected_block = available_blocks.length-1;
+            } else {
+                selected_block--;
+            }
+        }
+    }
+    drawMap();
+};
+keyReleased = function() {
+    keys[keyCode] = false;
+    keyIsPressed = false;
+    if (key.toString() === 'w') { // press the w key and...
+        if (!blockAt(x, y-1, layer)) {
+            y--; // ...you will go up
+        } else if (whichBlock(x,y-1, layer)==="cute/DoorTallOpen"){
+            y--;
+        }
+    }
+    if (key.toString() === 'a') { // press the a key and...
+        if (!blockAt(x-1, y, layer)) {
+            x--; // ...you will go left
+        }
+    }
+    if (key.toString() === 's') { // press the s key and...
+        if (!blockAt(x, y+1, layer)) {
+            y++; // ...you will go down
+        } else if (whichBlock(x,y+1, layer)==="cute/DoorTallOpen"){
+            y++;
+        }
+    }
+    if (key.toString() === 'd') { // press the d key and...
+        if (!blockAt(x+1, y, layer)) {
+            x++; // ...you will go right
+        }    
+    }
+    if (keyCode === UP) { // press the up arrow key and...
+        if (!blockAt(x, y, layer+1)) {
+            layer++; // ...you will go up a layer
+        }
+    }
+    if (keyCode === DOWN) { // press the down arrow key and...
+        if (layer > 0 && (!(blockAt(x, y, layer-1)) || whichBlock(x, y, layer-1) === "characterShadow")) {
+            layer--; // you will go down a layer
+        }
+    }
+    if (keyCode === 112) { // press the F1 key and...
+        if (hud_shown === false) {
+            hud_shown = true;
+        } else {
+            hud_shown = false;
+        }
+    }
+    if (keyCode === 113) { // press the F2 key and...
+        if (debug_screen_on === false) {
+            debug_screen_on = true;
+            console.log(JSON.stringify(tilemap));
+            console.log(JSON.stringify(checkBlockArea(6, 10, 1, 4, 2, 5)));
+        } else {
+            debug_screen_on = false;
+        }
+    }
+    if (keyCode === 114) { // press the F3 key and...
+        if (!blockAt(selectorX, selectorY, selectorLayer)) {
+            zombies.push({image:"cute/CustomZombie", x:selectorX, y:selectorY, layer:selectorLayer});
+        }
+    }
+    if (keyCode === 115) { // press the F4 key and...
+        // spawn zombie at a random location on the edge of the tilemap
+        zombieSpawningLocation = zombieSpawningLocations[Math.floor(Math.random() * zombieSpawningLocations.length)];
+        zombies.push({image:"cute/CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
+    }
+    if (key.toString() === 'r') { // press the r key and...
+        if (selectorLayer < 13) {
+            selectorLayer = 2; // the selector will be moved back to layer 2
+        }
+    }
+    if (key.toString() === 'z') { // press the z key and...
+        if (!(selectorX === x && selectorY === y && selectorLayer === layer)) {
+            if (whichBlock(selectorX, selectorY, selectorLayer) === "cute/DoorTallClosed") {
+                placeBlock("cute/DoorTallOpen", selectorX, selectorY, selectorLayer);
+            } else if (whichBlock(selectorX, selectorY, selectorLayer) === "cute/DoorTallOpen") {
+                placeBlock("cute/DoorTallClosed", selectorX, selectorY, selectorLayer);
+            } else {
+                if (selectorLayer < 13) {
+                    if (!blockAt(selectorX, selectorY, selectorLayer)) {
+                        placeBlock(available_blocks[selected_block], selectorX, selectorY, selectorLayer);
+                        owned_materials[selected_block]--;
+                    }
+                } else {
+                    blockLimitReachedMessageDelay = 120;
+                }
+            }
+        }
+    }
+    if (key.toString() === 'x') { // press the x key and...
+        owned_materials[available_blocks.indexOf(whichBlock(selectorX, selectorY, selectorLayer))]--;
+        placeBlock(0, selectorX, selectorY, selectorLayer);
+    }
+    if (key.toString() === 'c') { // press the c key and...
+        if (selected_block === available_blocks.length-1) {
+            selected_block = 0;
+        } else {
+            selected_block++;
+        }
+    }
+    if (key.toString() === 'n') { // press the n key and...
+        if (!isNight) {
+            isNight = true; // nighttime starts
+            nighttimeRemaining = 900+(levelsPassed+1)*90;
+            for (var i = 0; i < zombiesNextLevel; i++) { // zombies are spawned
+                zombieSpawningLocation = zombieSpawningLocations[Math.floor(Math.random() * zombieSpawningLocations.length)];
+                zombies.push({image:"cute/CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
+            }
+            zombiesNextLevel += 1;
+        }
+    }
+    if (key.toString() === '`') { // press the ` key and...
+        if (skin === "Boy") {
+            skin = "PinkGirl";
+        } else {
+            skin = "Boy";
+        }
+    }
+    drawMap();
+};
+mouseReleased = function() {
+    mouseIsPressed = false;
+    if (mouseButton === LEFT) {
+        while (blockAt(selectorX, selectorY, selectorLayer)) {
+            selectorLayer++;
+        }
+        if (whichBlock(selectorX, selectorY, selectorLayer-1) === "cute/WallBlockTall" || whichBlock(selectorX, selectorY, selectorLayer-1) === "cute/DoorTallClosed") {
+            selectorLayer++;
+        }
+    } else if (mouseButton === RIGHT) {
+        if (!blockAt(selectorX, selectorY, selectorLayer)) {
+            selectorLayer--;
+        }
+    } else if (mouseButton === CENTER) {
+        selected_block = available_blocks.indexOf(whichBlock(selectorX, selectorY, selectorLayer));
+        if (selected_block === -1) {
+            selected_block = available_blocks.indexOf(whichBlock(selectorX, selectorY, selectorLayer-1));
+        }
+    }
+    drawMap();
+};
+mouseMoved = function() {
+    oldSelectorX = selectorX;
+    oldSelectorY = selectorY;
+    selectorX = round(mouseX/35);
+    selectorY = round((mouseY/* + (selectorLayer-2)*13*/)/30);
+    if (oldSelectorX !== selectorX || oldSelectorY !== selectorY) {
+        drawMap();
+    }
+};
+
+frameRate(120);
+draw = function() {
+    mainloop();
+}
+
+        }
+        if (typeof draw !== 'undefined') processing.draw = draw;
+    });
+  </script>
+</body>
+</html>
