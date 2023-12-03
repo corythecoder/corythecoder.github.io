@@ -101,7 +101,7 @@
 			    
 			    // Convert date strings to Date objects and set the year to the current year
 			    var startDate = new Date(`${currentYear}-${startDateStr}`);
-			    var endDate = new Date(`${currentYear}-${endDateStr}`);
+			    var endDate = new Date(`${currentYear}-${endDateStr}T23:59:59.999`);
 			    // Check if the end date is before the start date, indicating it's in the next year
 			    if (endDate < startDate) {
 			        // Update the end date to be in the next year
