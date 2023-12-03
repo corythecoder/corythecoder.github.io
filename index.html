@@ -57,10 +57,10 @@
 	<body style="background-color:darkcyan;">
 		<div style="height:175%">
 			<div class="column" style="height:175%">
-				<!--<img src="snow.gif" style="position:absolute;top:0;left:0px;height:250px;z-index:-1;">
-				<img src="snow.gif" style="position:absolute;top:0;left:250px;height:250px;z-index:-1;">
-				<img src="snow.gif" style="position:absolute;top:0;left:500px;height:250px;z-index:-1;">
-				<img src="snow.gif" style="position:absolute;top:0;left:750px;height:250px;z-index:-1;">-->
+				<img src="snow.gif" class="snow" hidden style="position:absolute;top:0;left:0px;height:250px;z-index:-1;">
+				<img src="snow.gif" class="snow" hidden style="position:absolute;top:0;left:250px;height:250px;z-index:-1;">
+				<img src="snow.gif" class="snow" hidden style="position:absolute;top:0;left:500px;height:250px;z-index:-1;">
+				<img src="snow.gif" class="snow" hidden style="position:absolute;top:0;left:750px;height:250px;z-index:-1;">
 				<!-- snow for winter -->
 				<div id="wrapper">
 					<h1 style="padding-top:50px;">Welcome to CoryTheCoder<a href="orange.html" class="hidden">.</a><span style="font-size:0.5em">github.io</span></h1>
@@ -94,6 +94,44 @@
 				<p class="line">&#8239;Actually I have no idea what to put here so go scroll back to the left and suggest something for this spot lol</p>
 			</div>-->
 		</div>
+		<script>
+			var showSnowBetweenDates = function(startDateStr, endDateStr) {
+			    // Get the current year
+			    const currentYear = new Date().getFullYear();
+			    
+			    // Convert date strings to Date objects and set the year to the current year
+			    const startDate = new Date(`${currentYear}-${startDateStr}`);
+			    const endDate = new Date(`${currentYear}-${endDateStr}`);
+			    // Check if the end date is before the start date, indicating it's in the next year
+			    if (endDate < startDate) {
+			        // Update the end date to be in the next year
+			        endDate = new Date(`${currentYear + 1}-${endDateStr}`);
+			    }
+			    
+			    // Get the current date
+			    const currentDate = new Date();
+			    
+			    // Check if the current date is within the specified range
+			    if (currentDate >= startDate && currentDate <= endDate) {
+			        // Unhide elements with class "snow"
+			        const snowElements = document.querySelectorAll('.snow');
+			        snowElements.forEach(element => {
+			            element.removeAttribute('hidden');
+			        });
+			    }
+			}
+			
+			// Example usage:
+			// Assuming you have elements with class "snow" like <div class="snow">Snow Element</div>
+			// The function will unhide these elements only if the current date is between the specified dates.
+			
+			// Format: "MM-DD"
+			const startDate = "12-01";
+			const endDate = "01-01";
+			
+			// Call the function with the specified dates
+			showSnowBetweenDates(startDate, endDate);
+		</script>
 		<!--<script>
 			var mystring = "";
 			for (var i = 0; i < 80; i++){
