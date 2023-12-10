@@ -205,7 +205,7 @@
         </div>
         <hr>
         <div id="copyright-information">
-            <p>All images are from Lost Garden at <a href="https://lostgarden.home.blog/2007/05/12/dancs-miraculously-flexible-game-prototyping-tiles/">https://lostgarden.home.blog/</a> with the license <a href="https://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 (CC BY 3.0 US)</a>. The <a href="/cute/CustomZombie.png">zombie</a> is simply a green tinted version of Character-Boy.png, and it is also free to use.</p>
+            <p>All images are from Lost Garden at <a href="https://lostgarden.home.blog/2007/05/12/dancs-miraculously-flexible-game-prototyping-tiles/">https://lostgarden.home.blog/</a> with the license <a href="https://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 (CC BY 3.0 US)</a>. The <a href="/cubegame-graphics/CustomZombie.png">zombie</a> is simply a green tinted version of Character-Boy.png, and it is also free to use.</p>
         </div>
     </div>
     <!-- https://stackoverflow.com/a/25341598 -->
@@ -225,7 +225,7 @@
             processing.keyReleased = function () { keyIsPressed = false; };
 
             function getImage(s) {
-                var url = "/" + s + ".png";
+                var url = "/cubegame-graphics/" + s + ".png";
                 processing.externals.sketch.imageCache.add(url);
                 return processing.loadImage(url);
             }
@@ -242,10 +242,10 @@ imageMode(CENTER);
 var debug_screen_on = false;
 var hud_shown = true;
 var selected_block = 0;
-var available_blocks = ["cute/PlainBlock", "cute/StoneBlock", "cute/WoodBlock", "cute/WallBlockTall", "cute/BrownBlock", "cute/DirtBlock", "cute/GrassBlock", "cute/DoorTallClosed", "cute/RoofSouth", "cute/RoofSouthEast", "cute/RoofEast", "cute/RoofNorthEast", "cute/RoofNorth", "cute/RoofNorthWest", "cute/RoofWest", "cute/RoofSouthWest"];
+var available_blocks = ["PlainBlock", "StoneBlock", "WoodBlock", "WallBlockTall", "BrownBlock", "DirtBlock", "GrassBlock", "DoorTallClosed", "RoofSouth", "RoofSouthEast", "RoofEast", "RoofNorthEast", "RoofNorth", "RoofNorthWest", "RoofWest", "RoofSouthWest"];
 var owned_materials = [100, 100, 100, 50, 100, 100, 75, 10, 30, 10, 30, 10, 30, 10, 30, 10];
 var hardness_of_blocks = [10, 8, 3, 6, 1, 1, 1, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5];
-var tall_blocks = ["cute/WallBlockTall", "cute/DoorTallClosed"];
+var tall_blocks = ["WallBlockTall", "DoorTallClosed"];
 var keys = [];
 var tilemap = [];
 for (var i = 0; i < 13; i++){
@@ -269,7 +269,7 @@ var blockAt = function(xLocation, yLocation, layerLocation) {
     if (tilemap[layerLocation][yLocation][xLocation] !== 0) {
         return true;
     } else {
-        return !(whichBlock(xLocation, yLocation, layerLocation-1) !== "cute/WallBlockTall" && whichBlock(xLocation, yLocation, layerLocation-1) !== "cute/DoorTallClosed");
+        return !(whichBlock(xLocation, yLocation, layerLocation-1) !== "WallBlockTall" && whichBlock(xLocation, yLocation, layerLocation-1) !== "DoorTallClosed");
     }
 };
 var shadowCircle = function(blockScaleX, blockScaleY, a) {
@@ -360,11 +360,11 @@ var drawMap = function(/*xStart, yStart*/) {
                     shadowCircle(k, j);
                 }
                 if (k === selectorX && j === selectorY && i === selectorLayer) {
-                    drawBlock("cute/Selector", selectorX, selectorY, selectorLayer);
+                    drawBlock("Selector", selectorX, selectorY, selectorLayer);
                 }
                 if (k === x && j === y && i === layer) {
                     //drawBlock("characterShadow", x, y, 7);
-                    drawBlock("cute/Character"+skin, x, y, layer);
+                    drawBlock("Character"+skin, x, y, layer);
                 }
                 for (var l = 0; l < zombies.length; l++) {
                     if (k === zombies[l].x && j === zombies[l].y && i === zombies[l].layer) {
@@ -374,9 +374,9 @@ var drawMap = function(/*xStart, yStart*/) {
             }
         }
     }
-    drawBlock("cute/Selector2", selectorX, selectorY, selectorLayer);
+    drawBlock("Selector2", selectorX, selectorY, selectorLayer);
     for (var l = 0; l < zombies.length; l++) {
-        drawBlock("cute/GhostZombie", zombies[l].x, zombies[l].y, zombies[l].layer);
+        drawBlock("GhostZombie", zombies[l].x, zombies[l].y, zombies[l].layer);
     }
     if (isNight) {
         fill(0, 0, 150,100);
@@ -389,7 +389,7 @@ var drawMap = function(/*xStart, yStart*/) {
     if (hud_shown) {
         image(getImage(available_blocks[selected_block]), 370, 355, 50, 75);
         for (var i = 25; i < health*15; i+=15) {
-            image(getImage("cute/Heart"), i, 370, 50, 75);
+            image(getImage("Heart"), i, 370, 50, 75);
         }
     }
 };
@@ -399,7 +399,7 @@ var moveZombie = function(id){
         if (zombies[id].x-x < 0) {
             if (!blockAt(zombies[id].x+1,zombies[id].y, zombies[id].layer)){
                 zombies[id].x++;
-            } else if (whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer)==="cute/DoorTallOpen"){
+            } else if (whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].x++;
             } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer))]))) {
                 placeBlock(0, zombies[id].x+1,zombies[id].y, zombies[id].layer);
@@ -407,7 +407,7 @@ var moveZombie = function(id){
         } else if (zombies[id].x-x > 0) {
             if (!blockAt(zombies[id].x-1,zombies[id].y, zombies[id].layer)){
                 zombies[id].x--;
-            } else if (whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer)==="cute/DoorTallOpen"){
+            } else if (whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].x--;
             } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer))]))) {
                 placeBlock(0, zombies[id].x-1,zombies[id].y, zombies[id].layer);
@@ -419,7 +419,7 @@ var moveZombie = function(id){
         if (zombies[id].y-y < 0) {
             if (!blockAt(zombies[id].x,zombies[id].y+1, zombies[id].layer)){
                 zombies[id].y++;
-            } else if (whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer)==="cute/DoorTallOpen"){
+            } else if (whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].y++;
             } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer))]-5*levelsPassed)) {
                 placeBlock(0, zombies[id].x,zombies[id].y+1, zombies[id].layer)
@@ -427,7 +427,7 @@ var moveZombie = function(id){
         } else if (zombies[id].y-y > 0) {
             if (!blockAt(zombies[id].x,zombies[id].y-1, zombies[id].layer)){
                 zombies[id].y--;
-            } else if (whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer)==="cute/DoorTallOpen"){
+            } else if (whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].y--;
             } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer))]-5*levelsPassed)) {
                 placeBlock(0, zombies[id].x,zombies[id].y-1, zombies[id].layer)
@@ -451,20 +451,20 @@ var showDebugScreen = function() {
 
 for (var xy = 0; xy < tilemap[0].length; xy++) {
     for (var yx = 0; yx < tilemap[0][0].length; yx++) {
-        placeBlock("cute/DirtBlock", yx, xy, 0);
-        placeBlock("cute/GrassBlock", yx, xy, 1);
+        placeBlock("DirtBlock", yx, xy, 0);
+        placeBlock("GrassBlock", yx, xy, 1);
     }
 }
 
-placeBlock("cute/WallBlockTall", 10, 5, 2);
-placeBlock("cute/WallBlockTall", 6, 5, 2);
-placeBlock("cute/WoodBlock", 7, 5, 2);
-placeBlock("cute/WoodBlock", 7, 5, 3);
-placeBlock("cute/WoodBlock", 9, 5, 2);
-placeBlock("cute/WoodBlock", 9, 5, 3);
-placeBlock("cute/DoorTallClosed", 8, 5, 2);
-placeBlock("cute/WallBlockTall", x+1, y+1, 1);
-placeBlock("cute/WallBlockTall", x-1, y-1, 1);
+placeBlock("WallBlockTall", 10, 5, 2);
+placeBlock("WallBlockTall", 6, 5, 2);
+placeBlock("WoodBlock", 7, 5, 2);
+placeBlock("WoodBlock", 7, 5, 3);
+placeBlock("WoodBlock", 9, 5, 2);
+placeBlock("WoodBlock", 9, 5, 3);
+placeBlock("DoorTallClosed", 8, 5, 2);
+placeBlock("WallBlockTall", x+1, y+1, 1);
+placeBlock("WallBlockTall", x-1, y-1, 1);
 var mainloop = function() {
     if (health <= 0) {
         noLoop();
@@ -498,8 +498,8 @@ var mainloop = function() {
             drawMap();
         }
     }
-    if (selectorLayer !== 0 && whichBlock(selectorX, selectorY, selectorLayer-1) === 0 && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/WallBlockTall" && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/DoorTallClosed") {
-        while (selectorLayer !== 0 && whichBlock(selectorX, selectorY, selectorLayer-1) === 0 && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/WallBlockTall" && whichBlock(selectorX, selectorY, selectorLayer-2) !== "cute/DoorTallClosed") {
+    if (selectorLayer !== 0 && whichBlock(selectorX, selectorY, selectorLayer-1) === 0 && whichBlock(selectorX, selectorY, selectorLayer-2) !== "WallBlockTall" && whichBlock(selectorX, selectorY, selectorLayer-2) !== "DoorTallClosed") {
+        while (selectorLayer !== 0 && whichBlock(selectorX, selectorY, selectorLayer-1) === 0 && whichBlock(selectorX, selectorY, selectorLayer-2) !== "WallBlockTall" && whichBlock(selectorX, selectorY, selectorLayer-2) !== "DoorTallClosed") {
             selectorLayer--;
         }
         drawMap();
@@ -547,7 +547,7 @@ keyReleased = function() {
     if (key.toString() === 'w') { // press the w key and...
         if (!blockAt(x, y-1, layer)) {
             y--; // ...you will go up
-        } else if (whichBlock(x,y-1, layer)==="cute/DoorTallOpen"){
+        } else if (whichBlock(x,y-1, layer)==="DoorTallOpen"){
             y--;
         }
     }
@@ -559,7 +559,7 @@ keyReleased = function() {
     if (key.toString() === 's') { // press the s key and...
         if (!blockAt(x, y+1, layer)) {
             y++; // ...you will go down
-        } else if (whichBlock(x,y+1, layer)==="cute/DoorTallOpen"){
+        } else if (whichBlock(x,y+1, layer)==="DoorTallOpen"){
             y++;
         }
     }
@@ -596,13 +596,13 @@ keyReleased = function() {
     }
     if (keyCode === 114) { // press the F3 key and...
         if (!blockAt(selectorX, selectorY, selectorLayer)) {
-            zombies.push({image:"cute/CustomZombie", x:selectorX, y:selectorY, layer:selectorLayer});
+            zombies.push({image:"CustomZombie", x:selectorX, y:selectorY, layer:selectorLayer});
         }
     }
     if (keyCode === 115) { // press the F4 key and...
         // spawn zombie at a random location on the edge of the tilemap
         zombieSpawningLocation = zombieSpawningLocations[Math.floor(Math.random() * zombieSpawningLocations.length)];
-        zombies.push({image:"cute/CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
+        zombies.push({image:"CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
     }
     if (key.toString() === 'r') { // press the r key and...
         if (selectorLayer < 13) {
@@ -611,10 +611,10 @@ keyReleased = function() {
     }
     if (key.toString() === 'z') { // press the z key and...
         if (!(selectorX === x && selectorY === y && selectorLayer === layer)) {
-            if (whichBlock(selectorX, selectorY, selectorLayer) === "cute/DoorTallClosed") {
-                placeBlock("cute/DoorTallOpen", selectorX, selectorY, selectorLayer);
-            } else if (whichBlock(selectorX, selectorY, selectorLayer) === "cute/DoorTallOpen") {
-                placeBlock("cute/DoorTallClosed", selectorX, selectorY, selectorLayer);
+            if (whichBlock(selectorX, selectorY, selectorLayer) === "DoorTallClosed") {
+                placeBlock("DoorTallOpen", selectorX, selectorY, selectorLayer);
+            } else if (whichBlock(selectorX, selectorY, selectorLayer) === "DoorTallOpen") {
+                placeBlock("DoorTallClosed", selectorX, selectorY, selectorLayer);
             } else {
                 if (selectorLayer < 13) {
                     if (!blockAt(selectorX, selectorY, selectorLayer)&&owned_materials[selected_block] > 0) {
@@ -648,7 +648,7 @@ keyReleased = function() {
             nighttimeRemaining = 900+(levelsPassed+1)*90;
             for (var i = 0; i < zombiesNextLevel; i++) { // zombies are spawned
                 zombieSpawningLocation = zombieSpawningLocations[Math.floor(Math.random() * zombieSpawningLocations.length)];
-                zombies.push({image:"cute/CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
+                zombies.push({image:"CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
             }
             zombiesNextLevel += 1;
         }
@@ -668,7 +668,7 @@ mouseReleased = function() {
         while (blockAt(selectorX, selectorY, selectorLayer)) {
             selectorLayer++;
         }
-        if (whichBlock(selectorX, selectorY, selectorLayer-1) === "cute/WallBlockTall" || whichBlock(selectorX, selectorY, selectorLayer-1) === "cute/DoorTallClosed") {
+        if (whichBlock(selectorX, selectorY, selectorLayer-1) === "WallBlockTall" || whichBlock(selectorX, selectorY, selectorLayer-1) === "DoorTallClosed") {
             selectorLayer++;
         }
     } else if (mouseButton === RIGHT) {
