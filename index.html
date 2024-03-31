@@ -95,42 +95,11 @@
 			</div>-->
 		</div>
 		<script>
-			var showSnowBetweenDates = function(startDateStr, endDateStr) {
-			    // Get the current year
-			    var currentYear = new Date().getFullYear();
-			    
-			    // Convert date strings to Date objects and set the year to the current year
-			    var startDate = new Date(`${currentYear}-${startDateStr}`);
-			    var endDate = new Date(`${currentYear}-${endDateStr}T23:59:59.999`);
-			    // Check if the end date is before the start date, indicating it's in the next year
-			    if (endDate < startDate) {
-			        // Update the end date to be in the next year
-			        endDate = new Date(`${currentYear + 1}-${endDateStr}`);
-			    }
-			    
-			    // Get the current date
-			    var currentDate = new Date();
-			    
-			    // Check if the current date is within the specified range
-			    if (currentDate >= startDate && currentDate <= endDate) {
-			        // Unhide elements with class "snow"
-			        var snowElements = document.querySelectorAll('.snow');
-			        snowElements.forEach(element => {
-			            element.removeAttribute('hidden');
-			        });
-			    }
+			if (month === 11) { // December
+				document.querySelectorAll('.snow').forEach(element => element.removeAttribute('hidden'));
+			} else if (month === 3 && day === 1) { // April 1st
+				document.querySelector('#title').textContent = "Welcome to CoryTheGithubCoderCodes.malg.io";
 			}
-			
-			// Example usage:
-			// Assuming you have elements with class "snow" like <div class="snow">Snow Element</div>
-			// The function will unhide these elements only if the current date is between the specified dates.
-			
-			// Format: "MM-DD"
-			var startDate = "12-01";
-			var endDate = "01-01";
-			
-			// Call the function with the specified dates
-			showSnowBetweenDates(startDate, endDate);
 		</script>
 		<!--<script>
 			var mystring = "";
