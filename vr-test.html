@@ -20,62 +20,7 @@
           Column: ${colno}
           Error Object: ${error}`);
       }
-      /*var thumbstickpos = [0,0]
-      AFRAME.registerComponent('movement',{
-        init: function () {
-          this.el.addEventListener('thumbstickmoved', this.move);
-        },
-        move: function (evt) {
-          thumbstickpos = [evt.detail.x,evt.detail.y]
-          //pos = this.el.getAttribute('position'); // was supposed to be camera pos but it's not
-          if (evt.detail.y > 0.95) { console.log("DOWN"); }
-          if (evt.detail.y < -0.95) { console.log("UP"); }
-          if (evt.detail.x < -0.95) { console.log("LEFT"); }
-          if (evt.detail.x > 0.95) { console.log("RIGHT"); }
-        }
-      });
-      AFRAME.registerComponent('camera-relative-movement', {
-        schema: {
-          speed: { type: 'number', default: 1 }
-        },
-
-        init: function () {
-          this.velocity = new THREE.Vector3();
-        },
-
-        tick: function (time, timeDelta) {
-          /*var controller = this.el.sceneEl.querySelector('[oculus-touch-controls="hand: left"]');
-          if (thumbstickpos) {
-            //var input = controller.components['oculus-touch-controls'].controller;
-            if (!input) { return; }
-            //input = controller.components['oculus-touch-controls'].controller.gamepad;
-            if (input) {*\/
-              var x = thumbstickpos[0]; // Horizontal joystick axis
-              var y = thumbstickpos[1]; // Vertical joystick axis
-
-              // Get the thumbstick magnitude and normalize
-              var thumbstickMagnitude = Math.sqrt(x * x + y * y);
-              var normalizedMagnitude = Math.min(thumbstickMagnitude, 1); // Cap magnitude to 1
-
-              // Calculate the speed based on thumbstick distance
-              var adjustedSpeed = normalizedMagnitude * this.data.speed;
-
-              // Get the camera direction
-              var camera = document.getElementById("rig");
-              var forward = new THREE.Vector3();
-              camera.object3D.getWorldDirection(forward);
-
-              // Project the forward direction onto the XZ plane (ignore vertical axis)
-              forward.y = 0;
-              forward.normalize();
-
-              // Apply movement based on the forward direction and adjusted speed
-              this.velocity.copy(forward).multiplyScalar(adjustedSpeed * (timeDelta / 1000));
-              camera.object3D.position.add(this.velocity);
-        }
-      });*/
       var thumbstickpos = [0, 0];
-
       AFRAME.registerComponent('movement', {
         init: function () {
           this.el.addEventListener('thumbstickmoved', this.move.bind(this));
@@ -89,42 +34,7 @@
         }
       });
 
-      /*AFRAME.registerComponent('camera-relative-movement', {
-        schema: {
-          speed: { type: 'number', default: 1 }
-        },
-
-        init: function () {
-          this.velocity = new THREE.Vector3();
-        },
-
-        tick: function (time, timeDelta) {
-          var camera = document.getElementById("camera").object3D;
-          var forward = new THREE.Vector3();
-          camera.getWorldDirection(forward);
-
-          // Project the forward direction onto the XZ plane (ignore vertical axis)
-          forward.y = 0;
-          forward.normalize();
-
-          // Adjust movement based on thumbstick input
-          var x = thumbstickpos[0];
-          var y = thumbstickpos[1];
-
-          // Calculate the speed based on thumbstick distance
-          var thumbstickMagnitude = Math.sqrt(x * x + y * y);
-          var normalizedMagnitude = Math.min(thumbstickMagnitude, 1); // Cap magnitude to 1
-          var adjustedSpeed = normalizedMagnitude * this.data.speed;
-
-          // Compute movement direction relative to camera
-          var movementDirection = new THREE.Vector3(forward.x * y, 0, forward.z * y);
-          movementDirection.add(new THREE.Vector3(-forward.z * x, 0, forward.x * x));
-
-          // Apply movement based on adjusted speed
-          this.velocity.copy(movementDirection).multiplyScalar(adjustedSpeed * (timeDelta / 1000));
-          camera.position.add(this.velocity);
-        }
-      });*/
+      // thanks ChatGPT!
       AFRAME.registerComponent('camera-relative-movement', {
         schema: {
           speed: { type: 'number', default: 1 }
@@ -154,7 +64,7 @@
           var adjustedSpeed = normalizedMagnitude * this.data.speed;
 
           var movementDirection = new THREE.Vector3(forward.x * y, 0, forward.z * y);
-          movementDirection.add(new THREE.Vector3(-forward.z * x, 0, forward.x * x));
+          movementDirection.add(new THREE.Vector3(-forward.z * -x, 0, forward.x * -x));
 
           this.velocity.copy(movementDirection).multiplyScalar(adjustedSpeed * (timeDelta / 1000));
           vrlog(JSON.stringify(this.velocity));
