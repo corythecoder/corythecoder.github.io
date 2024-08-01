@@ -1,25 +1,184 @@
 <html>
+  <head>
+    <title>VR Test with A-Frame</title>
+    <meta name="description" content="VR Test with A-Frame">
+    <!-- a-frame, ammo physics engine, a-frame physics -->
+    <script src="//aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MozillaReality/ammo.js@8bbc0ea/builds/ammo.wasm.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.js"></script>
+    <!-- movement -->
+    <script>
+      vrlog = function(info){
+        textElement = document.getElementById("txt")
+        textElement.setAttribute('value', textElement.getAttribute('value') + info + "\n");
+      }
+      window.onerror = function(message, source, lineno, colno, error){
+        vrlog(`Error:
+          Message: ${message}
+          Source: ${source}
+          Line: ${lineno}
+          Column: ${colno}
+          Error Object: ${error}`);
+      }
+      /*var thumbstickpos = [0,0]
+      AFRAME.registerComponent('movement',{
+        init: function () {
+          this.el.addEventListener('thumbstickmoved', this.move);
+        },
+        move: function (evt) {
+          thumbstickpos = [evt.detail.x,evt.detail.y]
+          //pos = this.el.getAttribute('position'); // was supposed to be camera pos but it's not
+          if (evt.detail.y > 0.95) { console.log("DOWN"); }
+          if (evt.detail.y < -0.95) { console.log("UP"); }
+          if (evt.detail.x < -0.95) { console.log("LEFT"); }
+          if (evt.detail.x > 0.95) { console.log("RIGHT"); }
+        }
+      });
+      AFRAME.registerComponent('camera-relative-movement', {
+        schema: {
+          speed: { type: 'number', default: 1 }
+        },
 
-    <head>
-        <title>VR Test with A-Frame</title>
-        <meta name="description" content="VR Test with A-Frame">
+        init: function () {
+          this.velocity = new THREE.Vector3();
+        },
 
-        <!-- a-frame -->
-        <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-        <!-- a-frame physics system -->
-        <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.1.0/dist/aframe-physics-system.min.js"></script>
+        tick: function (time, timeDelta) {
+          /*var controller = this.el.sceneEl.querySelector('[oculus-touch-controls="hand: left"]');
+          if (thumbstickpos) {
+            //var input = controller.components['oculus-touch-controls'].controller;
+            if (!input) { return; }
+            //input = controller.components['oculus-touch-controls'].controller.gamepad;
+            if (input) {*\/
+              var x = thumbstickpos[0]; // Horizontal joystick axis
+              var y = thumbstickpos[1]; // Vertical joystick axis
+
+              // Get the thumbstick magnitude and normalize
+              var thumbstickMagnitude = Math.sqrt(x * x + y * y);
+              var normalizedMagnitude = Math.min(thumbstickMagnitude, 1); // Cap magnitude to 1
+
+              // Calculate the speed based on thumbstick distance
+              var adjustedSpeed = normalizedMagnitude * this.data.speed;
+
+              // Get the camera direction
+              var camera = document.getElementById("rig");
+              var forward = new THREE.Vector3();
+              camera.object3D.getWorldDirection(forward);
+
+              // Project the forward direction onto the XZ plane (ignore vertical axis)
+              forward.y = 0;
+              forward.normalize();
+
+              // Apply movement based on the forward direction and adjusted speed
+              this.velocity.copy(forward).multiplyScalar(adjustedSpeed * (timeDelta / 1000));
+              camera.object3D.position.add(this.velocity);
+        }
+      });*/
+      var thumbstickpos = [0, 0];
+
+      AFRAME.registerComponent('movement', {
+        init: function () {
+          this.el.addEventListener('thumbstickmoved', this.move.bind(this));
+        },
+        move: function (evt) {
+          thumbstickpos = [evt.detail.x, evt.detail.y];
+          if (evt.detail.y > 0.95) { console.log("DOWN"); }
+          if (evt.detail.y < -0.95) { console.log("UP"); }
+          if (evt.detail.x < -0.95) { console.log("LEFT"); }
+          if (evt.detail.x > 0.95) { console.log("RIGHT"); }
+        }
+      });
+
+      /*AFRAME.registerComponent('camera-relative-movement', {
+        schema: {
+          speed: { type: 'number', default: 1 }
+        },
+
+        init: function () {
+          this.velocity = new THREE.Vector3();
+        },
+
+        tick: function (time, timeDelta) {
+          var camera = document.getElementById("camera").object3D;
+          var forward = new THREE.Vector3();
+          camera.getWorldDirection(forward);
+
+          // Project the forward direction onto the XZ plane (ignore vertical axis)
+          forward.y = 0;
+          forward.normalize();
+
+          // Adjust movement based on thumbstick input
+          var x = thumbstickpos[0];
+          var y = thumbstickpos[1];
+
+          // Calculate the speed based on thumbstick distance
+          var thumbstickMagnitude = Math.sqrt(x * x + y * y);
+          var normalizedMagnitude = Math.min(thumbstickMagnitude, 1); // Cap magnitude to 1
+          var adjustedSpeed = normalizedMagnitude * this.data.speed;
+
+          // Compute movement direction relative to camera
+          var movementDirection = new THREE.Vector3(forward.x * y, 0, forward.z * y);
+          movementDirection.add(new THREE.Vector3(-forward.z * x, 0, forward.x * x));
+
+          // Apply movement based on adjusted speed
+          this.velocity.copy(movementDirection).multiplyScalar(adjustedSpeed * (timeDelta / 1000));
+          camera.position.add(this.velocity);
+        }
+      });*/
+      AFRAME.registerComponent('camera-relative-movement', {
+        schema: {
+          speed: { type: 'number', default: 1 }
+        },
+
+        init: function () {
+          this.velocity = new THREE.Vector3();
+          this.camera = document.getElementById('camera').object3D;
+        },
+
+        tick: function (time, timeDelta) {
+          document.getElementById("txt").setAttribute("value","");
+          var forward = new THREE.Vector3();
+          vrlog(JSON.stringify(forward));
+          this.camera.getWorldDirection(forward);
+          vrlog(JSON.stringify(forward));
+          forward.y = 0;
+          vrlog(JSON.stringify(forward));
+          forward.normalize();
+          vrlog(JSON.stringify(forward));
+          vrlog(thumbstickpos);
+          var x = thumbstickpos[0]; // Assuming thumbstickpos is a global variable
+          var y = thumbstickpos[1]; // Updated elsewhere in the scene
+
+          var thumbstickMagnitude = Math.sqrt(x * x + y * y);
+          var normalizedMagnitude = Math.min(thumbstickMagnitude, 1);
+          var adjustedSpeed = normalizedMagnitude * this.data.speed;
+
+          var movementDirection = new THREE.Vector3(forward.x * y, 0, forward.z * y);
+          movementDirection.add(new THREE.Vector3(-forward.z * x, 0, forward.x * x));
+
+          this.velocity.copy(movementDirection).multiplyScalar(adjustedSpeed * (timeDelta / 1000));
+          vrlog(JSON.stringify(this.velocity));
+          this.el.object3D.position.add(this.velocity);
+        }
+      });
+    </script>
     </head>
-
     <body>
-        <!-- a-scene contains all our A-Frame HTML -->
-        <a-scene physics="debug: false; debugDrawMode: 1;">
-            <a-sky color="black"></a-sky>
-            <a-plane color="#008080" shader="flat" height="10" width="10" rotation="-90 0 0" static-body></a-plane>
-            <a-plane position="0 5 5" color="#008080" height="10" width="10" rotation="0 180 0" static-body></a-plane>
-            <a-plane position="-5 5 0" color="#008080" height="10" width="10" rotation="0 90 90" static-body></a-plane>
-            <a-plane position="5 5 0" color="#008080" height="10" width="10" rotation="0 -90 90" static-body></a-plane>
-            <a-plane position="0 5 -5" color="#008080" height="10" width="10" static-body></a-plane>
-            <a-box position="0 10 -2.5" color="green" width="1" height="1" depth="1" dynamic-body></a-box>
-        </a-scene>
+      <!-- a-scene contains all our A-Frame HTML -->
+      <a-scene physics="driver: ammo; debug: false; debugDrawMode: 1;">
+        <a-sky color="black"></a-sky>
+        <a-plane color="#008080" shader="flat" height="10" width="10" rotation="-90 0 0" ammo-body="type: static" ammo-shape="type: box"></a-plane>
+        <a-plane position="0 5 5" color="#008080" height="10" width="10" rotation="0 180 0" ammo-body="type: static" ammo-shape="type: box"></a-plane>
+        <a-plane position="-5 5 0" color="#00ff80" height="10" width="10" rotation="0 90 90" ammo-body="type: static" ammo-shape="type: box"></a-plane>
+        <a-plane position="5 5 0" color="#0080ff" height="10" width="10" rotation="0 -90 90" ammo-body="type: static" ammo-shape="type: box"></a-plane>
+        <a-plane position="0 5 -5" color="#00CC00" height="10" width="10" ammo-body="type: static" ammo-shape="type: box"></a-plane>
+        <a-text id="txt" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" position="0 2 -4" scale="0.5 0.5 0.5" value="Console:\na" color="#000000"></a-text>
+        <a-box position="0 10 -2.5" color="green" width="1" height="1" depth="1" ammo-body="type: dynamic" ammo-shape="type: box"></a-box>
+        <a-entity id="rig" camera-relative-movement>
+          <a-camera id="camera" position="0 1.6 0"></a-camera>
+          <a-entity oculus-touch-controls="hand: left" movement></a-entity>
+          <a-entity oculus-touch-controls="hand: right"></a-entity>
+        </a-entity>
+      </a-scene>
     </body>
 </html>
