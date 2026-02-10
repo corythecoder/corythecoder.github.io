@@ -336,6 +336,7 @@ var nighttimeRemaining = 0;
 var zombiesNextLevel = 3;
 var zombieMoved;
 var levelsPassed = 0;
+var hasCheated = false;
 var screenMessage = "";
 var screenMessageTimeLeft = 0;
 
@@ -468,7 +469,11 @@ placeBlock("WallBlockTall", x-1, y-1, 1);
 var mainloop = function() {
     if (health <= 0) {
         noLoop();
-        alert("You died! You survived " + levelsPassed + " nights. Click OK to restart.");
+        if (!hasCheated) {
+            alert("You died! You survived " + levelsPassed + " nights. Click OK to restart.\nNote: You either placed a tall block, which zombies can't pass through, or you traveled vertically, which zombies can't do.");
+        } else {
+            alert("You died! You survived " + levelsPassed + " nights. Click OK to restart.");
+        }
         location.reload();
     }
 
@@ -517,6 +522,9 @@ keyPressed = function() {
                     placeBlock(available_blocks[selected_block], selectorX, selectorY, selectorLayer);
                     selectorLayer++;
                     owned_materials[selected_block]--;
+                    if (tall_blocks.indexOf(available_blocks[selected_block]) !== -1 && selectedLayer === 1) {
+                        hasCheated = true; // zombies can't walk through the top half of these blocks
+                    }
                 } else if (owned_materials[selected_block] === 0) {
                     screenMessage = "You don't have any of this material left!";
                     screenMessageTimeLeft = 120;
@@ -571,11 +579,17 @@ keyReleased = function() {
     if (keyCode === UP) { // press the up arrow key and...
         if (!blockAt(x, y, layer+1)) {
             layer++; // ...you will go up a layer
+            if (isNight) {
+                hasCheated = true; // zombies can't travel between layers
+            }
         }
     }
     if (keyCode === DOWN) { // press the down arrow key and...
         if (layer > 0 && (!(blockAt(x, y, layer-1)) || whichBlock(x, y, layer-1) === "characterShadow")) {
             layer--; // you will go down a layer
+            if (isNight) {
+                hasCheated = true; // zombies can't travel between layers
+            }
         }
     }
     if (keyCode === 112) { // press the F1 key and...
@@ -651,6 +665,9 @@ keyReleased = function() {
                 zombies.push({image:"CustomZombie", x:zombieSpawningLocation[0], y:zombieSpawningLocation[1], layer:2});
             }
             zombiesNextLevel += 1;
+            if (layer !== 2) {
+                hasCheated = true; // zombies can't travel between layers
+            }
         }
     }
     if (key.toString() === '`') { // press the ` key and...
@@ -704,4 +721,5 @@ draw = function() {
   </script>
 </body>
 </html>
+
 
