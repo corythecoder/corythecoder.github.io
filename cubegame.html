@@ -404,7 +404,7 @@ var moveZombie = function(id){
                 zombies[id].x++;
             } else if (whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].x++;
-            } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer))]))) {
+            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x+1,zombies[id].y, zombies[id].layer))])) {
                 placeBlock(0, zombies[id].x+1,zombies[id].y, zombies[id].layer);
             }
         } else if (zombies[id].x-x > 0) {
@@ -412,7 +412,7 @@ var moveZombie = function(id){
                 zombies[id].x--;
             } else if (whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].x--;
-            } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer))]))) {
+            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer))])) {
                 placeBlock(0, zombies[id].x-1,zombies[id].y, zombies[id].layer);
             }
         }
@@ -422,7 +422,7 @@ var moveZombie = function(id){
                 zombies[id].y++;
             } else if (whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].y++;
-            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer))]-5*levelsPassed)) {
+            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y+1, zombies[id].layer))])) {
                 placeBlock(0, zombies[id].x,zombies[id].y+1, zombies[id].layer)
             }
         } else if (zombies[id].y-y > 0) {
@@ -430,7 +430,7 @@ var moveZombie = function(id){
                 zombies[id].y--;
             } else if (whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer)==="DoorTallOpen"){
                 zombies[id].y--;
-            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer))]-5*levelsPassed)) {
+            } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer))])) {
                 placeBlock(0, zombies[id].x,zombies[id].y-1, zombies[id].layer)
             }
         } else if (zombies[id].layer === layer) {
@@ -723,6 +723,7 @@ draw = function() {
   </script>
 </body>
 </html>
+
 
 
 
