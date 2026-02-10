@@ -396,7 +396,7 @@ var drawMap = function(/*xStart, yStart*/) {
 };
 var moveZombie = function(id){
     // "Math.abs(zombies[id].x-x)" is the x distance between the zombie and the player
-    if (Math.abs(zombies[id].x-x) >= Math.abs(zombies[id].y-y)) {
+    if (Math.abs(zombies[id].x-x) > Math.abs(zombies[id].y-y)) {
         if (zombies[id].x-x < 0) {
             if (!blockAt(zombies[id].x+1,zombies[id].y, zombies[id].layer)){
                 zombies[id].x++;
@@ -413,8 +413,6 @@ var moveZombie = function(id){
             } else if (!Math.floor(Math.random()*(hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x-1,zombies[id].y, zombies[id].layer))]))) {
                 placeBlock(0, zombies[id].x-1,zombies[id].y, zombies[id].layer);
             }
-        } else {
-            health--;
         }
     } else {
         if (zombies[id].y-y < 0) {
@@ -433,6 +431,8 @@ var moveZombie = function(id){
             } else if (!Math.floor(Math.random()*hardness_of_blocks[available_blocks.indexOf(whichBlock(zombies[id].x,zombies[id].y-1, zombies[id].layer))]-5*levelsPassed)) {
                 placeBlock(0, zombies[id].x,zombies[id].y-1, zombies[id].layer)
             }
+        } else if (zombies[id].layer === layer) {
+            health--;
         }
     }
 }
@@ -721,5 +721,6 @@ draw = function() {
   </script>
 </body>
 </html>
+
 
 
