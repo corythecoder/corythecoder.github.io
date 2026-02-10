@@ -527,7 +527,7 @@ keyPressed = function() {
             }
         }
         if (keys[88]) { // press the x key and...
-            owned_materials[available_blocks.indexOf(whichBlock(selectorX, selectorY, selectorLayer))]--;
+            owned_materials[available_blocks.indexOf(whichBlock(selectorX, selectorY, selectorLayer))]++;
             placeBlock(0, selectorX, selectorY, selectorLayer);
             selectorLayer--;
         }
@@ -704,3 +704,4 @@ draw = function() {
   </script>
 </body>
 </html>
+
