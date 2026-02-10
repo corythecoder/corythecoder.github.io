@@ -470,9 +470,9 @@ var mainloop = function() {
     if (health <= 0) {
         noLoop();
         if (!hasCheated) {
-            alert("You died! You survived " + levelsPassed + " nights. Click OK to restart.\nNote: You either placed a tall block, which zombies can't pass through, or you traveled vertically, which zombies can't do.");
-        } else {
             alert("You died! You survived " + levelsPassed + " nights. Click OK to restart.");
+        } else {
+            alert("You died! You survived " + levelsPassed + " nights. Click OK to restart.\nNote: You either placed a tall block, which zombies can't pass through, or you traveled vertically, which zombies can't do.");
         }
         location.reload();
     }
@@ -721,6 +721,7 @@ draw = function() {
   </script>
 </body>
 </html>
+
 
 
 
